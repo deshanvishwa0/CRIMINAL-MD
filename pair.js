@@ -24,7 +24,7 @@ const {
   downloadContentFromMessage,
   proto,
   DisconnectReason
-} = require('dct-dev-private-baileys');
+} = require('dct-dula-baileys');
 // ────────────────────────────────────────────────
 let _dewDocBuffer = null;
 try {
