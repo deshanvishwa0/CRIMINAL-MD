@@ -5142,7 +5142,7 @@ case 'stopreact': {
 }
 
 // ─────────────── CSONG (Send Song to Channel) ─────────────────────────────────
-case 'csong': {
+case 'csong1': {
   try {
     const sanitizedNum = (number || '').replace(/[^0-9]/g, '');
     const cfg2 = await loadUserConfigFromMongo(sanitizedNum) || {};
