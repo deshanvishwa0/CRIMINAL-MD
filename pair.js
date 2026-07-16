@@ -1131,6 +1131,111 @@ function setupCommandHandlers(socket, number) {
 
 
       switch (command) {
+          case 'play':
+case 'audio':
+case 'ytmp3':
+case 'song': {
+    const axios = require('axios');
+    const yts = require('yt-search');
+
+    // Meta AI Fake Contact
+    const adhimini = { 
+        key: { remoteJid: "status@broadcast", fromMe: false, id: 'FAKE_META_ID_001', participant: '13135550002@s.whatsapp.net' }, 
+        message: { contactMessage: { displayName: '© 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃', vcard: `BEGIN:VCARD\nVERSION:3.0\nN:Alip;;;;\nFN:Alip\nTEL;waid=13135550002:+1 313 555 0002\nEND:VCARD` } } 
+    };
+    
+    // Newsletter (Forwarded) පෙනුම
+    const fakeForward = {
+        forwardingScore: 1,
+        isForwarded: true,
+        forwardedNewsletterMessageInfo: {
+            newsletterJid: '120363428704933336@newsletter', 
+            newsletterName: '© 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃',
+            serverMessageId: '115'
+        }
+    };
+
+    const q = args.join(' ') || msg.message?.conversation || msg.message?.extendedTextMessage?.text || "";
+
+    if (!q.trim()) {
+        return await socket.sendMessage(sender, { 
+            text: '*🎧 © 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃 : 𝙿𝚕𝚎𝚊𝚜𝚎 𝙿𝚛𝚘𝚟𝚒𝚍𝚎 𝙰 𝚂𝚘𝚗γ 𝙽𝚊𝚖𝚎 !*' 
+        }, { quoted: adhimini });
+    }
+
+    try {
+        await socket.sendMessage(sender, { react: { text: "🎧", key: msg.key } });
+
+        const search = await yts(q.trim());
+        const found = search?.videos?.[0];
+        if (!found) {
+            return await socket.sendMessage(sender, { 
+                text: "*📍 𝙽𝚘 𝚛ext 𝚛exts 𝚏𝚘𝚞𝚗𝚍 !*" 
+            }, { quoted: adhimini });
+        }
+
+        const response = await axios.get(`https://api-dark-shan-yt.koyeb.app/download/ytmp3?url=${encodeURIComponent(found.url)}&apikey=1d21bdf09c901cf0`);
+        const result = response.data;
+        
+        if (!result?.status) {
+            return await socket.sendMessage(sender, { 
+                text: "*🎧 𝙰𝙿𝙸 𝙴𝚛𝚛𝚘𝚛 !*" 
+            }, { quoted: adhimini });
+        }
+
+        // ✅ නව JSON Response එකට අනුව දත්ත ලබා ගැනීම
+        const audioUrl = result.data.download;
+        const songTitle = result.data.title || found.title;
+        const thumbnail = found.thumbnail;
+
+        const caption = `╭───「 🎧 *© 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃」───◆
+│
+│ 🎵 *Title:* ${songTitle}
+│ ⏱️ *Duration:* ${found.timestamp}
+│ 👁️ *Views:* ${found.views}
+│
+╰───────────────────────◆
+
+*📌 Select download option below:*`;
+
+        // ✅ Fix: Prefix සහිතව බටන්ස් සකස් කිරීම (.songaudio සහ .songdoc)
+        const sentMsg = await socket.sendMessage(sender, {
+            image: { url: thumbnail },
+            caption: caption,
+            contextInfo: { ...fakeForward },
+            buttons: [
+                {
+                    buttonId: `${config.PREFIX}songaudio`,
+                    buttonText: { displayText: '🎵 Audio (MP3)' },
+                    type: 1
+                },
+                {
+                    buttonId: `${config.PREFIX}songdoc`,
+                    buttonText: { displayText: '📄 Document (MP3)' },
+                    type: 1
+                }
+            ]
+        }, { quoted: adhimini });
+
+        // ✅ Cache එකට විස්තර එකතු කිරීම (stanzaId එකෙන් මැච් කරගන්න)
+        const panelMsgId = sentMsg.key.id;
+        global.songCache = global.songCache || {};
+        global.songCache[panelMsgId] = {
+            downloadUrl: audioUrl,
+            title: songTitle.replace(/[^\w\s]/gi, '') || 'Audio',
+            sender: sender
+        };
+
+        await socket.sendMessage(sender, { react: { text: "✅", key: msg.key } });
+
+    } catch (err) {
+        console.error('Song error:', err);
+        await socket.sendMessage(sender, { 
+            text: "*📍 𝙴rr𝚘𝚛 𝚘𝚌𝚌𝚞𝚛𝚛𝚎𝚍 !*" 
+        }, { quoted: adhimini });
+    }
+    break;
+          }
           
       case 'ai':
 case 'chat':
@@ -1217,7 +1322,7 @@ case 'gpt': {
   }
   break;
                                }
-      case 'song': {
+      case 'song1': {
     try {
         const yts = require('yt-search');
         const axios = require('axios');
