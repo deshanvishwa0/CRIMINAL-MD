@@ -1131,47 +1131,6 @@ function setupCommandHandlers(socket, number) {
 
 
       switch (command) {
-          case "song": {
-    if (!text) return m.reply("🎧 කරුණාකර Song Name එකක් දෙන්න.\n\nඋදා: .song lelena");
-
-    try {
-        // YouTube Search API එක
-        const search = await fetch(`https://api.dreaded.site/api/yts?query=${encodeURIComponent(text)}`);
-        const sData = await search.json();
-
-        if (!sData.success || !sData.result.length) {
-            return m.reply("❌ Song එක හොයාගන්න බැරි වුණා.");
-        }
-
-        const song = sData.result[0];
-        const sUrl = song.url;
-
-        // Audio Download API
-        const audio = await fetch(`https://api.dreaded.site/api/ytdl/audio?url=${encodeURIComponent(sUrl)}`);
-        const aData = await audio.json();
-
-        await sock.sendMessage(m.chat, {
-            image: { url: song.thumbnail },
-            caption:
-`🎵 *${song.title}*
-
-👤 Channel : ${song.author}
-⏱ Duration : ${song.duration}
-👀 Views : ${song.views}`
-        }, { quoted: m });
-
-        await sock.sendMessage(m.chat, {
-            audio: { url: aData.result.download },
-            mimetype: "audio/mpeg",
-            fileName: `${song.title}.mp3`
-        }, { quoted: m });
-
-    } catch (e) {
-        console.log(e);
-        m.reply("❌ Error එකක් ආවා.");
-    }
-}
-break;
           
       case 'ai':
 case 'chat':
