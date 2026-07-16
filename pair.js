@@ -1217,7 +1217,7 @@ case 'gpt': {
   }
   break;
                                }
-      case 'song1': {
+      case 'song': {
     try {
         const yts = require('yt-search');
         const axios = require('axios');
@@ -1344,7 +1344,7 @@ Reply with number:
 
                 try {
                     // 🔥 [FIXED API] - ස්ථිරවම වැඩ කරන හොඳම YouTube DL API එකක් දැම්මා
-                    const sApiUrl = `https://api.dreaded.site/api/ytdl/audio?url=${encodeURIComponent(sUrl)}`;
+                    const sApiUrl = `https://dl-api.koyeb.app/api/ytmp3?url=${encodeURIComponent(sUrl)}`;
                     const sApiResp = await axios.get(sApiUrl, { timeout: 60000 }).catch(() => null);
 
                     if (!sApiResp || !sApiResp.data || sApiResp.data.status !== 200 || !sApiResp.data.result?.download?.url) {
