@@ -6050,7 +6050,7 @@ END:VCARD`
   }
   break;
 }
-case 'song':
+case 'song3':
 case 'play':
 case 'audio':
 case 'ytmp3':
