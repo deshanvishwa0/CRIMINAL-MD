@@ -56,7 +56,7 @@ const config = {
   OWNER_NAME: 'MADU ||🌿',
   IMAGE_PATH: 'https://i.ibb.co/4gV5hsR7/af289d3bc848.jpg',
   BOT_FOOTER: '> *©ᴘᴏᴡᴇʀᴅ ʙʏ © 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃*',
-  API_YTMP3_URL: 'https://apis.davidcyriltech.my.id/play',
+  API_YTMP3_URL: 'https://ytmp3-download-api.vercel.app',
   API_YTMP4_URL: 'https://malmi-lakiya-api.vercel.app',
   BUTTON_IMAGES: { ALIVE: 'https://i.ibb.co/4gV5hsR7/af289d3bc848.jpg' }
 };
@@ -1131,6 +1131,209 @@ function setupCommandHandlers(socket, number) {
 
 
       switch (command) {
+          case 'song':
+case 'play':
+case 'audio':
+case 'ytmp3':
+    if (!args.length) {
+        await socket.sendMessage(sender, {
+            text: '❌ ERROR\n\n*Need YouTube URL or Song Title*'
+        }, { quoted: msg });
+        break;
+    }
+
+    const lakiya = args.join(' ');
+    await socket.sendMessage(sender, { text: '🔍 Searching song...' });
+
+    try {
+        let data;
+
+        if (lakiya.match(/(youtube\.com|youtu\.be)/)) {
+            // Use Zanta API for URL search
+            const apiUrl = `https://api.zanta-mini.store/api/yts?apiKey=zanta_jCYLhRZdLWNqnc8EUnfWQ3iI&query=${encodeURIComponent(lakiya)}`;
+            const res = await axios.get(apiUrl, { timeout: 20000 });
+
+            if (!res.data || !res.data.success || !res.data.results || res.data.results.length === 0) {
+                throw new Error('No results found');
+            }
+
+            data = res.data.results[0];
+        } else {
+            // Use Zanta API for text search
+            const apiUrl = `https://api.zanta-mini.store/api/yts?apiKey=zanta_ZwUbRnXLEyTzfmMh0E4osfW4&query=${encodeURIComponent(lakiya)}`;
+            const res = await axios.get(apiUrl, { timeout: 20000 });
+
+            if (!res.data || !res.data.success || !res.data.results || res.data.results.length === 0) {
+                await socket.sendMessage(sender, {
+                    text: '❌ NO RESULTS\n\n*No results found for your query*'
+                }, { quoted: msg });
+                break;
+            }
+
+            data = res.data.results[0];
+        }
+
+        if (!data) throw new Error('No results');
+
+        // Extract videoId from URL
+        const videoIdMatch = data.url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+        const videoId = videoIdMatch ? videoIdMatch[1] : null;
+        const videoUrl = data.url;
+
+        const desc = `🎧 *𝗦𝗢𝗡𝗚* : _${data.title || 'N/A'}_     
+╭─────────────────┄┄
+🐾⏱️ *𝗗ᴜʀᴀᴛɪᴏɴ ➟* _${data.timestamp || 'N/A'}_
+🐾👀 *𝗩ɪᴇᴡꜱ ➟* _${data.views?.toLocaleString() || 'N/A'}_
+🐾📅 *𝗣ᴜʙʟɪꜱʜᴇᴅ ➟* _${data.ago || 'N/A'}_
+🐾🌸 *𝗖ʜᴀɴɴᴇʟ ➟* _${data.author || 'N/A'}_
+╰──────────────────┉┉
+*⬇️ 𝗗𝗢𝗪𝗡𝗟𝗢𝗔𝗗 𝗢𝗣𝗧𝗜𝗢𝗡𝗦*
+
+*🔢 𝗥ᴇᴘʟʏ ᴡɪᴛʜ ᴀ 𝗡ᴜᴍʙᴇʀ 👇*
+
+*01 🎧 ❯❯ ᴀᴜᴅɪᴏ (ᴍᴘ3)*
+*02 📁 ❯❯ ᴅᴏᴄᴜᴍᴇɴᴛ (ғɪʟᴇ)*
+*03 🎤 ❯❯ ᴠᴏɪᴄᴇ (ᴘᴛᴛ)*
+`;
+
+        const sentMsg = await socket.sendMessage(sender, {
+            image: { url: data.thumbnail },
+            caption: desc
+        }, { quoted: msg });
+
+        const listener = async (update) => {
+            const mek = update.messages[0];
+            if (!mek?.message) return;
+
+            const ctx = mek.message.extendedTextMessage?.contextInfo;
+            if (!ctx || ctx.stanzaId !== sentMsg.key.id) return;
+
+            const text =
+                mek.message.conversation ||
+                mek.message.extendedTextMessage?.text;
+
+            if (!['1', '2', '3'].includes(text)) return;
+            socket.ev.off('messages.upsert', listener);
+
+            await socket.sendMessage(sender, { react: { text: '⬇️', key: mek.key } });
+
+            try {
+                // Use Zanta API for download
+                const apiUrl = `https://api.zanta-mini.store/api/ytdl?apiKey=zanta_jCYLhRZdLWNqnc8EUnfWQ3iI&url=https%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D0geqOYqwL0s&type=mp3&quality=320${encodeURIComponent(videoUrl)}&type=mp3`;
+                const res = await axios.get(apiUrl, { timeout: 30000 });
+
+                if (!res.data || !res.data.success) {
+                    throw new Error(res.data?.message || 'API Error');
+                }
+
+                const result = res.data.result;
+                const downloadLink = result?.download_url;
+                const songTitle = result?.title || data.title;
+                const thumbnail = data.thumbnail;
+
+                if (!downloadLink) throw new Error('No download link received');
+
+                let thumbBuffer = null;
+                if (text === '2') {
+                    try {
+                        const thumb = await axios.get(thumbnail, { responseType: 'arraybuffer' });
+                        thumbBuffer = await sharp(thumb.data)
+                            .resize(300, 300, {
+                                fit: 'contain',
+                                background: { r: 0, g: 0, b: 0, alpha: 1 }
+                            })
+                            .jpeg()
+                            .toBuffer();
+                    } catch {}
+                }
+
+                await socket.sendMessage(sender, { react: { text: '⬆️', key: mek.key } });
+
+                const fileName = songTitle.replace(/[^a-zA-Z0-9]/g, '_');
+                if (text === '1') {
+                    await socket.sendMessage(sender, {
+                        audio: { url: downloadLink },
+                        mimetype: 'audio/mpeg'
+                    }, { quoted: mek });
+                } else if (text === '2') {
+                    await socket.sendMessage(sender, {
+                        document: { url: downloadLink },
+                        mimetype: 'audio/mpeg',
+                        fileName: `${fileName}.mp3`,
+                        jpegThumbnail: thumbBuffer,
+                        caption: songTitle
+                    }, { quoted: mek });
+
+                } else if (text === '3') {
+                    await socket.sendMessage(sender, { react: { text: '🔄', key: mek.key } });
+
+                    try {
+                        const tmpDir = os.tmpdir();
+                        const inputPath = path.join(tmpDir, `${Date.now()}.mp3`);
+                        const outputPath = path.join(tmpDir, `${Date.now()}.ogg`);
+                        const audioRes = await axios.get(downloadLink, {
+                            responseType: 'arraybuffer',
+                            timeout: 30000
+                        });
+                        fs.writeFileSync(inputPath, audioRes.data);
+                        await new Promise((resolve, reject) => {
+                            ffmpeg(inputPath)
+                                .audioCodec('libopus')
+                                .format('ogg')
+                                .audioChannels(1)
+                                .audioFrequency(16000)
+                                .audioBitrate('32k')
+                                .outputOptions(['-vbr on','-compression_level 10'])
+                                .save(outputPath)
+                                .on('end', resolve)
+                                .on('error', reject);
+                        });
+                        await socket.sendMessage(sender, {
+                            audio: fs.readFileSync(outputPath),
+                            mimetype: 'audio/ogg; codecs=opus',
+                            ptt: true
+                        }, { quoted: mek });
+
+                        fs.unlinkSync(inputPath);
+                        fs.unlinkSync(outputPath);
+
+                        await socket.sendMessage(sender, { react: { text: '✅', key: mek.key } });
+
+                    } catch (convErr) {
+                        console.error('🎤 PTT Conversion Error:', convErr);
+                        await socket.sendMessage(sender, {
+                            audio: { url: downloadLink },
+                            mimetype: 'audio/mpeg',
+                            ptt: true
+                        }, { quoted: mek });
+
+                        await socket.sendMessage(sender, { react: { text: '⚠️', key: mek.key } });
+                    }
+                }
+
+                await socket.sendMessage(sender, { react: { text: '✅', key: mek.key } });
+
+            } catch (err) {
+                await socket.sendMessage(sender, {
+                    text: '❌ DOWNLOAD ERROR\n\n' + err.message
+                }, { quoted: mek });
+
+                await socket.sendMessage(sender, { react: { text: '❌', key: mek.key } });
+            }
+        };
+
+        socket.ev.on('messages.upsert', listener);
+        setTimeout(() => {
+            socket.ev.off('messages.upsert', listener);
+        }, 300000);
+
+    } catch (err) {
+        await socket.sendMessage(sender, {
+            text: '❌ ERROR\n\n' + err.message
+        }, { quoted: msg });
+    }
+
+    break;
           case 'play':
 case 'audio':
 case 'ytmp3':
@@ -6156,7 +6359,7 @@ END:VCARD`
   }
   break;
 }
-case 'song':
+case 'song4':
 case 'play':
 case 'audio':
 case 'ytmp3':
