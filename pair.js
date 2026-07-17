@@ -1174,7 +1174,7 @@ case 'song': {
             }, { quoted: adhimini });
         }
 
-        const response = await axios.get(`https://hashuu-apis-official.vercel.app/ytmp4?url=${encodeURIComponent(found.url)}&apikey=1d21bdf09c901cf0`);
+        const response = await axios.get(`https://nexoraapi.laksidunimsara.com/api/yt/all/mp3?url=input+url+https%3A%2F%2Fyoutu.be%2FAdgZX9DlNUs%3Fsi%3DYzxlOC0qmHXTD4p-&api_key=${encodeURIComponent(found.url)}&apikey=lakiya_1b3d58878e749351a02534008e50e0c7038c584de90b54a85a8d4ce6195d78c8`);
         const result = response.data;
         
         if (!result?.status) {
