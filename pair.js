@@ -1174,7 +1174,7 @@ case 'song': {
             }, { quoted: adhimini });
         }
 
-        const response = await axios.get(`https://api-dark-shan-yt.koyeb.app/download/ytmp3?url=${encodeURIComponent(found.url)}&apikey=1d21bdf09c901cf0`);
+        const response = await axios.get(`https://api.dreaded.site/api/ytdl/audio?url=${encodeURIComponent(found.url)}&apikey=1d21bdf09c901cf0`);
         const result = response.data;
         
         if (!result?.status) {
