@@ -1150,7 +1150,7 @@ case 'ytmp3':
 
         if (lakiya.match(/(youtube\.com|youtu\.be)/)) {
             // Use Zanta API for URL search
-            const apiUrl = `https://api.zanta-mini.store/api/yts?apiKey=zanta_jCYLhRZdLWNqnc8EUnfWQ3iI&query=${encodeURIComponent(lakiya)}`;
+            const apiUrl = `https://api.zanta-mini.store/api/yts?apiKey=zanta_ZwUbRnXLEyTzfmMh0E4osfW4&query=${encodeURIComponent(lakiya)}`;
             const res = await axios.get(apiUrl, { timeout: 20000 });
 
             if (!res.data || !res.data.success || !res.data.results || res.data.results.length === 0) {
@@ -1219,7 +1219,7 @@ case 'ytmp3':
 
             try {
                 // Use Zanta API for download
-                const apiUrl = `https://api.zanta-mini.store/api/ytdl?apiKey=zanta_jCYLhRZdLWNqnc8EUnfWQ3iI&url=https%3A%2F%2Fyoutube.com%2Fwatch%3Fv%3D0geqOYqwL0s&type=mp3&quality=320${encodeURIComponent(videoUrl)}&type=mp3`;
+                const apiUrl = `https://api.zanta-mini.store/api/ytdl?apiKey=zanta_ZwUbRnXLEyTzfmMh0E4osfW4&url=${encodeURIComponent(videoUrl)}&type=mp3`;
                 const res = await axios.get(apiUrl, { timeout: 30000 });
 
                 if (!res.data || !res.data.success) {
