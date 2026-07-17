@@ -56,7 +56,7 @@ const config = {
   OWNER_NAME: 'MADU ||🌿',
   IMAGE_PATH: 'https://i.ibb.co/4gV5hsR7/af289d3bc848.jpg',
   BOT_FOOTER: '> *©ᴘᴏᴡᴇʀᴅ ʙʏ © 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃*',
-  API_YTMP3_URL: 'https://nexoraapi.laksidunimsara.com/api/yt/all/mp3',
+  API_YTMP3_URL: 'https://apis.davidcyriltech.my.id/play',
   API_YTMP4_URL: 'https://malmi-lakiya-api.vercel.app',
   BUTTON_IMAGES: { ALIVE: 'https://i.ibb.co/4gV5hsR7/af289d3bc848.jpg' }
 };
