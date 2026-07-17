@@ -1174,7 +1174,7 @@ case 'song': {
             }, { quoted: adhimini });
         }
 
-        const response = await axios.get(`https://nexoraapi.laksidunimsara.com/api/yt/all/mp3?url=${encodeURIComponent(found.url)}&apikey=1d21bdf09c901cf0`);
+        const response = await axios.get(`https://hashuu-apis-official.vercel.app/ytmp4?url=${encodeURIComponent(found.url)}&apikey=1d21bdf09c901cf0`);
         const result = response.data;
         
         if (!result?.status) {
