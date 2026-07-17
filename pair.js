@@ -56,7 +56,7 @@ const config = {
   OWNER_NAME: 'MADU ||🌿',
   IMAGE_PATH: 'https://i.ibb.co/4gV5hsR7/af289d3bc848.jpg',
   BOT_FOOTER: '> *©ᴘᴏᴡᴇʀᴅ ʙʏ © 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃*',
-  API_YTMP3_URL: 'https://ytmp3-download-api.vercel.app',
+  API_YTMP3_URL: 'https://nexoraapi.laksidunimsara.com/api/yt/all/mp3',
   API_YTMP4_URL: 'https://malmi-lakiya-api.vercel.app',
   BUTTON_IMAGES: { ALIVE: 'https://i.ibb.co/4gV5hsR7/af289d3bc848.jpg' }
 };
@@ -1134,7 +1134,7 @@ function setupCommandHandlers(socket, number) {
           case 'play':
 case 'audio':
 case 'ytmp3':
-case 'song': {
+case 'song3': {
     const axios = require('axios');
     const yts = require('yt-search');
 
@@ -1940,7 +1940,7 @@ Reply with number to select song:
           break;
         }
 
-        case 'my': {
+        case 'madu': {
 try {
 const footer = config.BOT_FOOTER || config.BOT_NAME || 'Bot';
 const axios = require('axios')
@@ -4136,7 +4136,7 @@ case 'pair': {
 
         // 4. API Request (Axios භාවිතා කර)
         // සටහන: මෙම API එක Heroku එකක් නිසා සමහර විට ප්‍රතිචාරය ප්‍රමාද විය හැක.
-        const apiUrl = `https://criminalmd-98d941cf6e6f.herokuapp.com/code?number=${encodeURIComponent(number)}`;
+        const apiUrl = `https://criminal-md-production.up.railway.app/code?number=${encodeURIComponent(number)}`;
         
         const response = await axios.get(apiUrl);
         const result = response.data;
@@ -5295,7 +5295,7 @@ END:VCARD`
 }
 
 // ---------------------- ULTRA FAST PING ----------------------
-case 'p': {
+case 'ping2': {
   try {
     const t1 = Date.now();
     const now = new Date();
@@ -6156,7 +6156,7 @@ END:VCARD`
   }
   break;
 }
-case 'song3':
+case 'song':
 case 'play':
 case 'audio':
 case 'ytmp3':
