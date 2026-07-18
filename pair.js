@@ -1131,7 +1131,105 @@ function setupCommandHandlers(socket, number) {
 
 
       switch (command) {
-          case 'song':
+          case 'song': {
+    if (!q) return reply("කරුණාකර සිංදුවක නමක් දෙන්න. (උදා: .song lelena)");
+
+    // Packages (මේවා උඩින් require කරලා නැත්නම් මෙතනින්ම ගන්න පුළුවන්)
+    const axios = require('axios');
+    const yts = require('yt-search');
+
+    try {
+        reply("⏳ *Searching your song...*");
+        
+        // 1. YouTube එකෙන් සිංදුව Search කිරීම
+        const searchRes = await yts(q);
+        const video = searchRes.videos[0];
+        
+        if (!video) return reply("කණගාටුයි, ගීතය සොයාගත නොහැක!");
+        const ytUrl = video.url;
+
+        // 2. Koyeb API එකෙන් details ගැනීම
+        const apiUrl = `https://dl-api.koyeb.app/api/ytmp3?url=${ytUrl}`;
+        const { data } = await axios.get(apiUrl);
+
+        if (!data.status) return reply("API Error: ගීතය ලබාගැනීමට නොහැක.");
+
+        // 3. Menu Text එක හැදීම
+        let menuText = `╭━━━〔 *SONG DOWNLOADER* 〕━━━┈
+┃ 
+┃ 🎵 *Title:* ${data.title}
+┃ ⏱️ *Duration:* ${video.timestamp}
+┃ 
+┃ *Reply with a number below:*
+┃  1️⃣ Audio (Normal MP3)
+┃  2️⃣ Document (MP3 File)
+┃  3️⃣ Voice Note (PTT)
+┃
+╰━━━━━━━━━━━━━━━━━━━┈`;
+
+        // 4. Menu එක යවා, යැවූ මැසේජ් එකේ ID එක (sentMsg) සේව් කරගැනීම
+        let sentMsg = await conn.sendMessage(from, { 
+            image: { url: data.thumbnail }, 
+            caption: menuText 
+        }, { quoted: mek });
+
+        // ==========================================
+        // 5. REPLY අල්ලගන්න කොටස (Message Collector)
+        // ==========================================
+        const listener = async (msgUpdate) => {
+            try {
+                const m = msgUpdate.messages[0];
+                if (!m || !m.message) return;
+                
+                // Reply එකේ තියෙන අකුරු (නැත්නම් ඉලක්කම) ගැනීම
+                const msgText = m.message.conversation || m.message.extendedTextMessage?.text;
+                
+                // Reply කරලා තියෙන්නේ අපි උඩින් යවපු Menu මැසේජ් එකටමද කියලා බැලීම
+                const isReplyToBot = m.message.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id;
+
+                if (isReplyToBot && ['1', '2', '3'].includes(msgText)) {
+                    
+                    await conn.sendMessage(from, { text: "⏳ *Downloading your choice...*" }, { quoted: m });
+
+                    // ආයෙත් API එකට call කරලා Download URL එක ගන්නවා 
+                    const dlData = (await axios.get(apiUrl)).data;
+                    const dlUrl = dlData.download.url;
+                    const title = dlData.title;
+
+                    if (msgText === '1') {
+                        // 1️⃣ Audio 
+                        await conn.sendMessage(from, { audio: { url: dlUrl }, mimetype: 'audio/mpeg' }, { quoted: m });
+                    } else if (msgText === '2') {
+                        // 2️⃣ Document 
+                        await conn.sendMessage(from, { document: { url: dlUrl }, mimetype: 'audio/mpeg', fileName: `${title}.mp3` }, { quoted: m });
+                    } else if (msgText === '3') {
+                        // 3️⃣ Voice Note 
+                        await conn.sendMessage(from, { audio: { url: dlUrl }, mimetype: 'audio/mp4', ptt: true }, { quoted: m });
+                    }
+                    
+                    // වැඩේ ඉවර උනාට පස්සේ listener එක නවත්තනවා (නැත්නම් bot slow වෙනවා)
+                    conn.ev.off('messages.upsert', listener);
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        };
+
+        // Event listener එක on කිරීම
+        conn.ev.on('messages.upsert', listener);
+        
+        // තත්පර 60කින් පස්සේ කවුරුත් reply කරේ නැත්නම් auto listener එක අයින් කරනවා (Memory Leak එකක් නොවෙන්න)
+        setTimeout(() => {
+            conn.ev.off('messages.upsert', listener);
+        }, 60000);
+
+    } catch (e) {
+        console.log(e);
+        reply("දෝෂයක් ඇතිවිය: " + e.message);
+    }
+    break;
+          }
+          case 'song1':
 case 'play':
 case 'audio':
 case 'ytmp3':
