@@ -1131,7 +1131,110 @@ function setupCommandHandlers(socket, number) {
 
 
       switch (command) {
-          case 'song': {
+          case 'song': එක ඇතුලට මේක දාන්න
+case 'song0':
+case 'play':
+case 'audio': {
+    try {
+        if (!q) {
+            return reply("🎵 Give a song name or YouTube link.");
+        }
+
+        // NEW API REQUEST URL (David Cyril API)
+        const apiUrl = `https://apis.davidcyriltech.my.id/play?query=${encodeURIComponent(q)}`;
+
+        const response = await axios.get(apiUrl, { timeout: 15000 });
+        let res = response.data;
+
+        // If response is a string, parse it to JSON
+        if (typeof res === "string") {
+            res = JSON.parse(res);
+        }
+
+        // CHECK IF THE RESPONSE IS SUCCESSFUL
+        if (!res || res.status !== true || !res.result || !res.result.download_url) {
+            console.log("Invalid API Response:", res);
+            return reply("❌ Failed to search or get download link from API.");
+        }
+
+        const songData = res.result;
+        const audioUrl = songData.download_url;
+        const songTitle = songData.title || "Song";
+        const fileName = `${songTitle}.mp3`;
+
+        // SEND THUMBNAIL AND DETAILS
+        await conn.sendMessage(from, {
+            image: { url: songData.thumbnail },
+            caption:
+`• *🎶 ${songTitle}*
+
+❖ 𝐒𝐎𝐍𝐆 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃𝐈𝐍𝐆...
+
+> *© 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃*`
+        }, { quoted: mek });
+
+        console.log("AUDIO DOWNLOAD URL =>", audioUrl);
+
+        // TEMP FILE PATH
+        const filePath = path.join(__dirname, `song_${Date.now()}.mp3`);
+
+        try {
+            // DOWNLOAD AUDIO USING BUFFER
+            const audioRes = await axios({
+                url: audioUrl,
+                method: "GET",
+                responseType: "arraybuffer",
+                headers: {
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+                    "Accept": "*/*"
+                },
+                timeout: 30000
+            });
+
+            // WRITE FILE TO DISK
+            fs.writeFileSync(filePath, audioRes.data);
+
+            // SEND AUDIO TO WHATSAPP
+            await conn.sendMessage(from, {
+                audio: fs.readFileSync(filePath),
+                mimetype: "audio/mpeg",
+                ptt: false,
+                fileName: fileName
+            }, { quoted: mek });
+
+            // DELETE TEMP FILE
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+
+        } catch (downloadErr) {
+            console.error("Audio Download/Send Error:", downloadErr);
+            
+            // Fallback: send directly via URL
+            try {
+                await conn.sendMessage(from, {
+                    audio: { url: audioUrl },
+                    mimetype: "audio/mpeg",
+                    ptt: false,
+                    fileName: fileName
+                }, { quoted: mek });
+            } catch (fallbackErr) {
+                console.error("Fallback Send Error:", fallbackErr);
+                reply("❌ Failed to download or send the audio file.");
+            }
+
+            if (fs.existsSync(filePath)) {
+                fs.unlinkSync(filePath);
+            }
+        }
+
+    } catch (e) {
+        console.error("Global Error:", e);
+        reply("❌ Download process failed.");
+    }
+    break;
+            }
+          case 'songmadu': {
     if (!q) return reply("කරුණාකර සිංදුවක නමක් දෙන්න. (උදා: .song lelena)");
 
     // Packages (මේවා උඩින් require කරලා නැත්නම් මෙතනින්ම ගන්න පුළුවන්)
