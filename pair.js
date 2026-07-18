@@ -50,7 +50,7 @@ const config = {
   NEWSLETTER_JID: '120363428704933336@newsletter',
   OTP_EXPIRY: 300000,
   WORK_TYPE: 'public',
-   OWNER_NUMBER: process.env.OWNER_NUMBER ? process.env.OWNER_NUMBER.split(',') : ['94787940686','94773495139','94743387798','94781629812'],
+   OWNER_NUMBER: process.env.OWNER_NUMBER ? process.env.OWNER_NUMBER.split(',') : ['94787940686'],
   CHANNEL_LINK: 'https://whatsapp.com/channel/0029VbDdsYV6RGJQQyv5X91f',
   BOT_NAME: '© 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃',
   BOT_VERSION: '2.0.0V',
