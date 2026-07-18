@@ -1131,8 +1131,7 @@ function setupCommandHandlers(socket, number) {
 
 
       switch (command) {
-          case 'song': එක ඇතුලට මේක දාන්න
-case 'song0':
+          case 'song':
 case 'play':
 case 'audio': {
     try {
