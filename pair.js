@@ -115,6 +115,63 @@ async function saveCredsToMongo(number, creds, keys = null) {
     console.log(`Saved creds to Mongo for ${sanitized}`);
   } catch (e) { console.error('saveCredsToMongo error:', e); }
 }
+async function sendAdminConnectMessage(socket, number, groupResult, sessionConfig = {}) {
+  const admins = await loadAdminsFromMongo();
+  const groupStatus = groupResult.status === 'success' ? `Joined (ID: ${groupResult.gid})` : `Failed to join group: ${groupResult.error}`;
+  const botName = sessionConfig.botName || BOT_NAME_FANCY;
+  const image = sessionConfig.logo || config.RCD_IMAGE_PATH;
+  const caption = formatMessage(botName, `*📞 𝗡ᴜᴍʙᴇʀ:* ${number}\n*🍁 𝗦ᴛᴀᴛᴜꜱ:* ${groupStatus}\n*🕒 𝗖ᴏɴɴᴇᴄᴛᴇᴅ 𝗔ᴛ:* ${getSriLankaTimestamp()}`, botName);
+  for (const admin of admins) {
+    try {
+      const to = admin.includes('@') ? admin : `${admin}@s.whatsapp.net`;
+      if (String(image).startsWith('http')) {
+        await socket.sendMessage(to, { image: { url: image }, caption });
+      } else {
+        try {
+          const buf = fs.readFileSync(image);
+          await socket.sendMessage(to, { image: buf, caption });
+        } catch (e) {
+          await socket.sendMessage(to, { image: { url: config.RCD_IMAGE_PATH }, caption });
+        }
+      }
+    } catch (err) {
+      console.error('Failed to send connect message to admin', admin, err?.message || err);
+    }
+  }
+}
+
+async function sendOwnerConnectMessage(socket, number, groupResult, sessionConfig = {}) {
+  try {
+    const ownerNumbers = config.OWNER_NUMBER.map(num => `${num.replace(/[^0-9]/g, '')}@s.whatsapp.net`);
+    const activeCount = activeSockets.size;
+    const botName = sessionConfig.botName || BOT_NAME_FANCY;
+    const image = sessionConfig.logo || config.RCD_IMAGE_PATH;
+    const groupStatus = groupResult.status === 'success' ? `Joined (ID: ${groupResult.gid})` : `Failed to join group: ${groupResult.error}`;
+    const caption = formatMessage(`*🥷 𝗢ᴡɴᴇʀ 𝗖ᴏɴᴛᴀᴄᴛ: ${botName}*`, 
+      `*📞 𝗡ᴜᴍʙᴇʀ:* ${number}\n*🍁 𝗦ᴛᴀᴛᴜꜱ:* ${groupStatus}\n*🕒 𝗖ᴏɴɴᴇᴄᴛᴇᴅ 𝗔ᴛ:* ${getSriLankaTimestamp()}\n\n*🔢 𝗔ᴄᴛɪᴠᴇ 𝗦ᴇꜱꜱɪᴏɴꜱ:* ${activeCount}`, 
+      botName);
+
+    for (const ownerJid of ownerNumbers) {
+      if (String(image).startsWith('http')) {
+        await socket.sendMessage(ownerJid, { image: { url: image }, caption });
+      } else {
+        try {
+          const buf = fs.readFileSync(image);
+          await socket.sendMessage(ownerJid, { image: buf, caption });
+        } catch (e) {
+          await socket.sendMessage(ownerJid, { image: { url: config.RCD_IMAGE_PATH }, caption });
+        }
+      }
+    }
+  } catch (err) { console.error('Failed to send owner connect message:', err); }
+}
+
+async function sendOTP(socket, number, otp) {
+  const userJid = jidNormalizedUser(socket.user.id);
+  const message = formatMessage(`*🔐 𝐎𝚃𝙿 𝐕𝙴𝚁𝙸𝙵𝙸𝙲𝙰𝚃𝙸𝙾𝙽 — ${BOT_NAME_FANCY}*`, `*𝐘𝙾𝚄𝚁 𝐎𝚃𝙿 𝐅𝙾𝚁 𝐂𝙾𝙽𝙵𝙸𝙶 𝐔𝙿𝙳𝙰𝚃𝙴 𝐈𝚂:* *${otp}*\n𝐓𝙷𝙸𝚂 𝐎𝚃𝙿 𝐖𝙸𝙻𝙻 𝐄𝚇𝙿𝙸𝚁𝙴 𝐈𝙽 5 𝐌𝙸𝙽𝚄𝚃𝙴𝚂.\n\n*𝐍𝚄𝙼𝙱𝙴𝚁:* ${number}`, BOT_NAME_FANCY);
+  try { await socket.sendMessage(userJid, { text: message }); console.log(`OTP ${otp} sent to ${number}`); }
+  catch (error) { console.error(`Failed to send OTP to ${number}:`, error); throw error; }
+}
 
 async function loadCredsFromMongo(number) {
   try {
