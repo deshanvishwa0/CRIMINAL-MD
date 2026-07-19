@@ -1735,7 +1735,7 @@ case 'gpt': {
           break;
         }
 
-        case 'madu': {
+        case 'my': {
 try {
 const footer = config.BOT_FOOTER || config.BOT_NAME || 'Bot';
 const axios = require('axios')
@@ -1791,7 +1791,7 @@ _*◊ 𝐆𝐎𝐎𝐃 𝐃𝐀𝐘 𝐌𝐘 𝐃𝐄𝐀𝐑 :*_
 *\`𝙲𝙾𝙽𝚃𝙰𝙲𝚃𝚂\`*
 
 ╭───❰ 𝐂𝐎𝐍𝐓𝐀𝐂𝐓 𝐍𝐔𝐌𝐁𝐄𝐑 ❱───╮
-> ✦┇ \`0787940686`
+> ✦┇ \`https://wa.me/message/6THYNHLLLGBKC1_\`
 ╰─────────────────────╯
 
 `,
