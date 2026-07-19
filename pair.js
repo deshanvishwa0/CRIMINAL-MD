@@ -1178,7 +1178,7 @@ _*${randomQuote}*_
 
     const templateButtons = [
 const buttons = [
-        {
+  {
             buttonId: `${config.PREFIX}⛩️ 🄰🄻🄸🅅🄴`,
             buttonText: { displayText: 'ALIVE' },
             type: 1,
