@@ -1176,7 +1176,7 @@ _*${randomQuote}*_
 > *POWERED BY  𝐃ᴄᴛ 𝐂𝚁𝙸𝙼𝙸𝙽𝙰𝙻 𝐌𝐝🍃*
 `;
 
-    const templateButtons = [
+  
 const buttons = [
   {
             buttonId: `${config.PREFIX}⛩️ 🄰🄻🄸🅅🄴`,
