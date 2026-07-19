@@ -1279,7 +1279,7 @@ _*${randomQuote}*_
       mimetype: 'application/docx',
       fileName: `${botName} 𝐒𝐘𝐒𝐓𝐄𝐌 🔮`, 
       fileLength: 109951162777600, 
-      pageCount: 2025,
+      pageCount: 2026,
       caption: text,
       contextInfo: {
           externalAdReply: {
