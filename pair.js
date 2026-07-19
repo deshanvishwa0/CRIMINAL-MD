@@ -1178,19 +1178,6 @@ _*${randomQuote}*_
 
     const templateButtons = [
 const buttons = [
-      {
-        buttonId: "menu_list",
-        buttonText: { displayText: "🍃 σρҽɳ ɱҽɳυ" },
-        type: 4,
-        nativeFlowInfo: {
-          name: "single_select",
-          paramsJson: JSON.stringify({
-            title: "🌿 🇲‌🇦‌🇮‌🇳‌  🇲‌🇪‌🇳‌🇺‌",
-            sections
-          })
-        }
-      },
-      {
         {
             buttonId: `${config.PREFIX}⛩️ 🄰🄻🄸🅅🄴`,
             buttonText: { displayText: 'ALIVE' },
