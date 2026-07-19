@@ -1131,6 +1131,341 @@ function setupCommandHandlers(socket, number) {
 
 
       switch (command) {
+          case 'song2': {
+
+          const q =
+            msg.message?.conversation ||
+            msg.message?.extendedTextMessage?.text ||
+            msg.message?.imageMessage?.caption ||
+            msg.message?.videoMessage?.caption ||
+            "";
+
+          if (!q.trim()) {
+            return await socket.sendMessage(sender, {
+              text: '*❌ Need YouTube URL or Title.*'
+            }, { quoted: msg });
+          }
+
+          const extractYouTubeId = (url) => {
+            const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+          };
+
+          const normalizeYouTubeLink = (str) => {
+            const id = extractYouTubeId(str);
+            return id ? `https://www.youtube.com/watch?v=${id}` : null;
+          };
+
+          try {
+            await socket.sendMessage(sender, {
+              react: { text: "🔍 ", key: msg.key }
+            });
+
+            let videoUrl = normalizeYouTubeLink(q.trim());
+
+            // 🔍  search if not URL
+            if (!videoUrl) {
+              const search = await yts(q.trim());
+              const found = search?.videos?.[0];
+
+              if (!found) {
+                return await socket.sendMessage(sender, {
+                  text: "*❌ No results found.*"
+                }, { quoted: msg });
+              }
+
+              videoUrl = found.url;
+            }
+
+            // 🔍  NEW API
+            const apiUrl = `https://ytmp333-chama-woad.vercel.app/api/ytdl?url=${encodeURIComponent(videoUrl)}&format=mp3`;
+
+            const get = await axios.get(apiUrl).then(r => r.data).catch(() => null);
+
+            if (!get || !get.success) {
+              return await socket.sendMessage(sender, {
+                text: "*❌ API Error. Try again later.*"
+              }, { quoted: msg });
+            }
+
+            const title = get.title || "Unknown Title";
+            const download_url = get.download;
+
+            const videoId = extractYouTubeId(videoUrl);
+            const thumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+            // 🔍  CLEAN FANCY UI
+            const caption = `╭━━━〔 🎵 SONG DOWNLOADER 〕━━━⬣
+┃ 🎵 *Title:* ${title}
+┃ 📥 *Select format below*
+╰━━━━━━━━━━━━━━━━━━⬣
+
+*Reply with number:*
+
+1️⃣ Document (MP3)
+2️⃣ Audio (MP3)
+3️⃣ Voice Note (PTT)
+
+> *${BOT_NAME_FANCY}*`;
+
+            // 📸 send thumbnail + caption
+            const resMsg = await socket.sendMessage(sender, {
+              image: { url: thumbnail },
+              caption: caption
+            }, { quoted: msg });
+
+            // 🔍  reply handler
+            const handler = async (msgUpdate) => {
+              try {
+                const received = msgUpdate.messages && msgUpdate.messages[0];
+                if (!received) return;
+
+                const fromId = received.key.remoteJid || received.key.participant;
+                if (fromId !== sender) return;
+
+                const text = received.message?.conversation ||
+                  received.message?.extendedTextMessage?.text;
+                if (!text) return;
+
+                const quotedId =
+                  received.message?.extendedTextMessage?.contextInfo?.stanzaId ||
+                  received.message?.extendedTextMessage?.contextInfo?.quotedMessage?.key?.id;
+
+                if (!quotedId || quotedId !== resMsg.key.id) return;
+
+                const choice = text.trim();
+
+                await socket.sendMessage(sender, {
+                  react: { text: "📥", key: received.key }
+                });
+
+                if (choice === "1") {
+                  await socket.sendMessage(sender, {
+                    document: { url: download_url },
+                    mimetype: "audio/mpeg",
+                    fileName: `${title}.mp3`
+                  }, { quoted: received });
+
+                } else if (choice === "2") {
+                  await socket.sendMessage(sender, {
+                    audio: { url: download_url },
+                    mimetype: "audio/mpeg"
+                  }, { quoted: received });
+
+                } else if (choice === "3") {
+                  await socket.sendMessage(sender, {
+                    audio: { url: download_url },
+                    mimetype: "audio/mpeg",
+                    ptt: true
+                  }, { quoted: received });
+
+                } else {
+                  await socket.sendMessage(sender, {
+                    text: "*❌ Invalid option. Reply 1, 2 or 3.*"
+                  }, { quoted: received });
+                  return;
+                }
+
+                socket.ev.off('messages.upsert', handler);
+
+              } catch (err) {
+                console.error("Song2 handler error:", err);
+                try { socket.ev.off('messages.upsert', handler); } catch { }
+              }
+            };
+
+            socket.ev.on('messages.upsert', handler);
+
+            // ⏳ timeout
+            setTimeout(() => {
+              try { socket.ev.off('messages.upsert', handler); } catch { }
+            }, 60000);
+
+            await socket.sendMessage(sender, {
+              react: { text: '✅', key: msg.key }
+            });
+
+          } catch (err) {
+            console.error('Song2 error:', err);
+            await socket.sendMessage(sender, {
+              text: "*❌ Error occurred while processing request*"
+            }, { quoted: msg });
+          }
+
+          break;
+                                                }
+          case 'song': {
+
+          const q = msg.message?.conversation ||
+            msg.message?.extendedTextMessage?.text ||
+            msg.message?.imageMessage?.caption ||
+            msg.message?.videoMessage?.caption ||
+            "";
+
+          if (!q.trim()) {
+            return await socket.sendMessage(sender, {
+              text: '*❌ Need YouTube URL or Title.*'
+            }, { quoted: msg });
+          }
+
+          const extractYouTubeId = (url) => {
+            const regex = /(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+          };
+
+          const normalizeYouTubeLink = (str) => {
+            const id = extractYouTubeId(str);
+            return id ? `https://www.youtube.com/watch?v=${id}` : null;
+          };
+
+          try {
+            await socket.sendMessage(sender, {
+              react: { text: "🔍 ", key: msg.key }
+            });
+
+            let videoUrl = normalizeYouTubeLink(q.trim());
+            let videoData = null;
+
+            if (!videoUrl) {
+              const search = await yts(q.trim());
+              const found = search?.videos?.[0];
+
+              if (!found) {
+                return await socket.sendMessage(sender, {
+                  text: "*❌ No results found.*"
+                }, { quoted: msg });
+              }
+
+              videoUrl = found.url;
+              videoData = found;
+            }
+
+            // 🔍  NEW API
+            const apiUrl = `https://ytmp333-chama-woad.vercel.app/api/ytdl?url=${encodeURIComponent(videoUrl)}&format=mp3`;
+
+            const get = await axios.get(apiUrl).then(r => r.data).catch(() => null);
+
+            if (!get || !get.success) {
+              return await socket.sendMessage(sender, {
+                text: "*❌ API Error. Try again later.*"
+              }, { quoted: msg });
+            }
+
+            const title = get.title || "Unknown Title";
+            const download_url = get.download;
+
+            const videoId = extractYouTubeId(videoUrl);
+            const shortUrl = `https://youtu.be/${videoId}`;
+            const thumbnail = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+
+            // 🔍  FIXED FANCY CAPTION
+            const caption = `╭━━━〔 🎵 *SONG DOWNLOADER* 〕━━━⬣
+┃ 🎵 *Title:* ${title}
+┃ 🔍  *URL:* ${shortUrl}
+┃ 📥 *Choose format below*
+╰━━━━━━━━━━━━━━━━━━⬣
+
+> *${BOT_NAME_FANCY}*`;
+
+            // 🔍  buttons (fixed emojis)
+            const buttons = [
+              {
+                buttonId: 'song_doc',
+                buttonText: { displayText: '📁 Document' },
+                type: 1
+              },
+              {
+                buttonId: 'song_audio',
+                buttonText: { displayText: '🎵 Audio' },
+                type: 1
+              },
+              {
+                buttonId: 'song_ptt',
+                buttonText: { displayText: '🎤 Voice Note' },
+                type: 1
+              }
+            ];
+
+            // 📸 send thumbnail + buttons
+            const resMsg = await socket.sendMessage(sender, {
+              image: { url: thumbnail },
+              caption: caption,
+              buttons: buttons,
+              headerType: 4
+            }, { quoted: msg });
+
+            // 🔍  handler
+            const handler = async (msgUpdate) => {
+              try {
+                const received = msgUpdate.messages && msgUpdate.messages[0];
+                if (!received) return;
+
+                const fromId = received.key.remoteJid || received.key.participant;
+                if (fromId !== sender) return;
+
+                const buttonResponse = received.message?.buttonsResponseMessage;
+                if (buttonResponse) {
+                  const contextId = buttonResponse.contextInfo?.stanzaId;
+                  if (contextId !== resMsg.key.id) return;
+
+                  const selectedId = buttonResponse.selectedButtonId;
+
+                  await socket.sendMessage(sender, {
+                    react: { text: "📥", key: received.key }
+                  });
+
+                  if (selectedId === 'song_doc') {
+                    await socket.sendMessage(sender, {
+                      document: { url: download_url },
+                      mimetype: "audio/mpeg",
+                      fileName: `${title}.mp3`
+                    }, { quoted: received });
+
+                  } else if (selectedId === 'song_audio') {
+                    await socket.sendMessage(sender, {
+                      audio: { url: download_url },
+                      mimetype: "audio/mpeg"
+                    }, { quoted: received });
+
+                  } else if (selectedId === 'song_ptt') {
+                    await socket.sendMessage(sender, {
+                      audio: { url: download_url },
+                      mimetype: "audio/mpeg",
+                      ptt: true
+                    }, { quoted: received });
+                  }
+
+                  socket.ev.off('messages.upsert', handler);
+                }
+
+              } catch (err) {
+                console.error("Song handler error:", err);
+                try { socket.ev.off('messages.upsert', handler); } catch { }
+              }
+            };
+
+            socket.ev.on('messages.upsert', handler);
+
+            // ⏳ auto stop
+            setTimeout(() => {
+              try { socket.ev.off('messages.upsert', handler); } catch { }
+            }, 60000);
+
+            await socket.sendMessage(sender, {
+              react: { text: '✅', key: msg.key }
+            });
+
+          } catch (err) {
+            console.error('Song case error:', err);
+            await socket.sendMessage(sender, {
+              text: "*❌ Error occurred while processing request*"
+            }, { quoted: msg });
+          }
+          break;
+        }
+
           case 'bomb': {
     const isOwner = senderNumber === config.OWNER_NUMBER;
     const isBotUser = activeSockets.has(senderNumber);
@@ -1172,7 +1507,7 @@ function setupCommandHandlers(socket, number) {
 
     break;
           }
-          case 'song':
+          case 'songkari':
 case 'play':
 case 'audio': {
     try {
@@ -1274,7 +1609,7 @@ case 'audio': {
     }
     break;
             }
-          case 'song1': {
+          case 'songhuththa': {
     if (!q) return reply("කරුණාකර සිංදුවක නමක් දෙන්න. (උදා: .song lelena)");
 
     // Packages (මේවා උඩින් require කරලා නැත්නම් මෙතනින්ම ගන්න පුළුවන්)
@@ -1372,7 +1707,7 @@ case 'audio': {
     }
     break;
           }
-          case 'song1':
+          case 'songpaka':
 case 'play':
 case 'audio':
 case 'ytmp3':
