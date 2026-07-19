@@ -1131,6 +1131,119 @@ function setupCommandHandlers(socket, number) {
 
 
       switch (command) {
+          case 'menu': {
+    const captionText = `*╭─┉❰ 𝐖𝙴𝙻𝙲𝙾𝙼𝙴 𝐔𝚂𝙴𝚁 ❱┉─┉──•*
+*│ 🌺 𝐇𝙴𝙻𝙻𝙾 : ${userTag}*
+*╰┉────────────┉─•*
+*❰🌟 𝐆ʀᴇᴇᴛɪɴɢ : ${greetingText}*
+
+*╭──❰ 𝐃ᴄᴛ 𝐂𝚁𝙸𝙼𝙸𝙽𝙰𝙻 𝐌ɪɴɪ ❱──┉*
+*│◊╭────────────┉•┉*
+*│◊│*✦ 💀 \`ʙᴏᴛɴᴀᴍᴇ\`: _*${BOT_NAME}*_
+*│◊│*✦ 🖤 \`ᴏᴡɴᴇʀ\`: ${OWNER_NAME}
+*│◊│*✦ 🌟 \`ᴜꜱᴀɢᴇ\`: ${ramUsage}
+*│◊│*✦ 💖 \`ʀᴀᴍ\`: ${ramUsage}
+*│◊│*✦ 🌺 \`ᴜᴘᴛɪᴍᴇ\`: ${runtime}
+*│◊╰────────────┉•┉*
+*╰──────────────────┉*
+
+_*${randomQuote}*_
+
+🌟 *𝙷𝙴𝙻𝙻𝙾 𝙱𝙾𝚃 𝚄𝚂𝙴𝚁,*
+*-𝚃𝙷𝙸𝚂 𝙸𝚂 𝚃𝙷𝙴 𝙲𝚁𝙸𝙼𝙸𝙽𝙰𝙻 𝙼𝙳 𝙼𝙸𝙽𝙸 𝚆𝙷𝙰𝚃𝚂𝙰𝙿𝙿 𝙱𝙾𝚃, 𝚃𝙷𝙴 𝙳𝙲𝚃 𝙴𝙿𝙸𝙲 𝙿𝚁𝙾𝙹𝙴𝙲𝚃*💖
+
+> _𝚜𝚎𝚕𝚎𝚌𝚝 𝚊 𝚘𝚙𝚝𝚒𝚘𝚗 𝚘𝚗 𝚋𝚎𝚕𝚘𝚠_
+*✰┈  M‌         A‌          D‌         U‌   ┈✰*
+
+📌️ .🍃 🄿🄸🄽🄶 → *bot up time*
+🌹 .🄼🄴🄽🅄 → *bot command*
+✨ .⛩️ 🄰🄻🄸🅅🄴  → *Check bot status*  
+🎨 .🄵🄰🄽🄲🅈 <text>  → *Stylish fonts*  
+💣 .🄱🄾🄼🄱 *<num,msg,count> → Message bomb*  
+🧹 .🄳🄴🄻🄴🅃🄴🄼🄴 → *Delete your session*  
+🎧 .🅂🄾🄽🄶🍷 <title> → *dσwnlσαd song*  
+🎬 .🅅🄸🄳🄴🄾🍃 < *title*> → *dσwnlσαd VIDEO*  
+📸 .🄸🄶♞ <link> → *INSTAGRAM VIDEO*  
+📘 .🍃🄵🄱  < *LINK*> → *FACEBOOK VIDEO*  
+🔍 .🅆🄸🄽🄵🄾 ♠ < *NUM*> → *WHATSAPP INFO*
+🗣️ .🅅🅅🌀→ *ONEWIVE PHOTO*
+💭 .🍃🄰🄸 <text> → *AI CHAT* 
+👷 .ts <text> → *TIKTOK SEACK*
+😎 .tt <link> → *TIKTOK VIDEO*
+♠.❄ 🄾🅆🄽🄴🅁→ *BOt OWNER*
+
+╰━━━━━━━━━━━━━━━━━━━━━━╯
+> *POWERED BY  𝐃ᴄᴛ 𝐂𝚁𝙸𝙼𝙸𝙽𝙰𝙻 𝐌𝐝🍃*
+`;
+
+    const templateButtons = [
+const buttons = [
+      {
+        buttonId: "menu_list",
+        buttonText: { displayText: "🍃 σρҽɳ ɱҽɳυ" },
+        type: 4,
+        nativeFlowInfo: {
+          name: "single_select",
+          paramsJson: JSON.stringify({
+            title: "🌿 🇲‌🇦‌🇮‌🇳‌  🇲‌🇪‌🇳‌🇺‌",
+            sections
+          })
+        }
+      },
+      {
+        {
+            buttonId: `${config.PREFIX}⛩️ 🄰🄻🄸🅅🄴`,
+            buttonText: { displayText: 'ALIVE' },
+            type: 1,
+        },
+        {
+            buttonId: `${config.PREFIX}❄ OWNER`,
+            buttonText: { displayText: 'OWNER' },
+            type: 1,
+        },
+        {
+            buttonId: 'action',
+            buttonText: {
+                displayText: '🌿 🇲‌🇦‌🇮‌🇳‌  🇲‌🇪‌🇳‌🇺‌'
+            },
+            type: 4,
+            nativeFlowInfo: {
+                name: 'single_select',
+                paramsJson: JSON.stringify({
+                    title: 'Click Here ❏',
+                    sections: [
+                        {
+                            title: `© 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃`,
+                            highlight_label: '',
+                            rows: [
+                                {
+                                    title: 'CHECK BOT STATUS',
+                                    description: '𝐏𝙾𝚆𝙴𝚁𝙴𝙳 𝐁𝚈 © 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃',
+                                    id: `${config.PREFIX}⛩️ 🄰🄻🄸🅅🄴`,
+                                },
+                                {
+                                    title: '❄ OWNER NUMBER',
+                                    description: '𝐏𝙾𝚆𝙴𝚁𝙴𝙳 𝐁𝚈 𝐃ᴄᴛ 𝐂𝚁𝙸𝙼𝙸𝙽𝙰𝙻 𝐌𝐝',
+                                    id: `${config.PREFIX}❄ OWNER`,
+                                },
+                            ],
+                        },
+                    ],
+                }),
+            },
+        }
+    ];
+
+    await socket.sendMessage(m.chat, {
+        buttons: templateButtons,
+        headerType: 1,
+        viewOnce: true,
+        image: { url: "https://i.ibb.co/Y7mDm9s4/cafe794f723c.jpg" },
+        caption: `𝐃ᴄᴛ 𝐂𝚁𝙸𝙼𝙸𝙽𝙰𝙻 𝐌𝐝 𝐌𝐢𝐍𝐢 𝐁𝙾𝚃 𝐋𝙸𝚂𝚃 𝐌𝙴𝙽𝚄\n\n${captionText}`,
+    }, { quoted: msg });
+
+    break;
+          }
           
           case 'song':
 case 'play':
@@ -1858,7 +1971,7 @@ break;
 
 // ==========================================
 
-                          case 'menu': {
+                          case 'menu2': {
   try {
     await socket.sendMessage(sender, {
       react: { text: "🫧", key: msg.key }
