@@ -1176,9 +1176,21 @@ _*${randomQuote}*_
 > *POWERED BY  𝐃ᴄᴛ 𝐂𝚁𝙸𝙼𝙸𝙽𝙰𝙻 𝐌𝐝🍃*
 `;
 
-  
-const buttons = [
-  {
+    const templateButtons = [
+      {
+        buttonId: "menu_list",
+        buttonText: { displayText: "🍃 σρҽɳ ɱҽɳυ" },
+        type: 4,
+        nativeFlowInfo: {
+          name: "single_select",
+          paramsJson: JSON.stringify({
+            title: "🌿 🇲‌🇦‌🇮‌🇳‌  🇲‌🇪‌🇳‌🇺‌",
+            sections
+          })
+        }
+      },
+      {
+        {
             buttonId: `${config.PREFIX}⛩️ 🄰🄻🄸🅅🄴`,
             buttonText: { displayText: 'ALIVE' },
             type: 1,
