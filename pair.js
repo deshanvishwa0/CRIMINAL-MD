@@ -6921,7 +6921,7 @@ case 'owner': {
     });
 
     // 2. Configuration & Data
-    const ownerNumber = '94776856623';
+    const ownerNumber = '94752120756';
     const ownerName = 'MADUSANKA ||🌿';
     const botName = '© 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃';
     const ownerImage = 'https://i.ibb.co/4gV5hsR7/af289d3bc848.jpg';
