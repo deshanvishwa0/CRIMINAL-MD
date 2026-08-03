@@ -52,7 +52,7 @@ const config = {
   OWNER_NUMBER: process.env.OWNER_NUMBER || '94756331255',
   CHANNEL_LINK: 'https://whatsapp.com/channel/0029VbDdsYV6RGJQQyv5X91f',
   BOT_NAME: '© 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃',
-  BOT_VERSION: '3.0.0V',
+  BOT_VERSION: '2.0.0V',
   OWNER_NAME: 'MADU ||🌿',
   IMAGE_PATH: 'https://i.ibb.co/4gV5hsR7/af289d3bc848.jpg',
   BOT_FOOTER: '> *©ᴘᴏᴡᴇʀᴅ ʙʏ © 𝐃ᴄᴛ 𝗖ʀɪᴍɪɴᴀʟ 𝐌𝙳 ||🍃*',
