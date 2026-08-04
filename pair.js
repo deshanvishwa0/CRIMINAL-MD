@@ -1,4 +1,7 @@
-const express = require('express');
+const {
+    sendDashboardPassword,
+    verifyDashboardPassword
+} = require("./dashboard-password");const express = require('express');
 const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
