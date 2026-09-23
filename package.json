@@ -13,7 +13,7 @@
     "axios": "^1.16.0",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
-    "dct-dev-private-baileys": "^1.0.0",
+    "@itsliaaa/baileys": "^1.0.0",
     "dotenv": "^16.6.1",
     "express": "^4.22.1",
     "express-rate-limit": "^8.4.1",
